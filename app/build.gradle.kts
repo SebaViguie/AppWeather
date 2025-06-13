@@ -63,4 +63,8 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.play.services.location)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 }

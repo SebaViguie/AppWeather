@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.appweather.repository.models.Ciudad
 import com.example.appweather.R
+import androidx.compose.material.icons.filled.Search
 
 @Composable
 fun CiudadesView (
@@ -61,22 +61,20 @@ fun CiudadesView (
             modifier = Modifier.fillMaxSize()
         )
 
-        Column(modifier = modifier) {
+        Column(modifier = modifier.padding(32.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                        .weight(1f)
                         .border(
                             width = 2.dp,
                             color = Color.Black,
                             shape = RoundedCornerShape(12.dp)
                         )
+                        .padding(0.dp)
                 ) {
                     TextField(
                         value = value,
@@ -87,8 +85,8 @@ fun CiudadesView (
                         },
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = null,
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Buscar",
                                 tint = Color(0xFF3F51B5)
                             )
                         },
@@ -103,24 +101,34 @@ fun CiudadesView (
                             focusedLabelColor = Color(0xFF3F51B5)
                         ),
                         shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
 
-                IconButton(
-                    onClick = {
+                Spacer(modifier = Modifier.width(8.dp))
 
-                    },
-                    modifier = Modifier.padding(start = 8.dp)
+                Box(
+                    modifier = Modifier
+                        .background(Color(0xFFE3F2FD), shape = RoundedCornerShape(12.dp))
+                        .size(56.dp)
+                        .border(
+                            width = 2.dp,
+                            color = Color.Black,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Obtener ubicación",
+                    UbicacionButton(
+                        onLocationObtained = { lat, lon ->
+                            onAction(CiudadesIntencion.BuscarPorCoordenadas(lat, lon))
+                        },
+                        iconTint = Color(0xFF3F51B5),
                         modifier = Modifier.size(48.dp)
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             when(state) {
                 CiudadesEstado.Cargando -> TextoCentrado(texto = "Cargando...")
@@ -135,6 +143,8 @@ fun CiudadesView (
         }
     }
 }
+
+
 
 @Composable
 fun TextoCentrado(texto: String) {

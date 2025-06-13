@@ -12,6 +12,8 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
+import com.example.appweather.data.model.WeatherResponse
+
 
 class RepositoryApi : IRepository {
 
@@ -69,6 +71,30 @@ class RepositoryApi : IRepository {
             return forecast.list
         }else{
             throw Exception()
+        }
+    }
+
+    override suspend fun buscarCiudadPorCoordenadas(lat: Double, lon: Double): List<Ciudad> {
+        val respuesta = cliente.get("https://api.openweathermap.org/data/2.5/weather") {
+            parameter("lat", lat)
+            parameter("lon", lon)
+            parameter("appid", apiKey)
+            parameter("lang", "es")
+            parameter("units", "metric")
+        }
+
+        if (respuesta.status == HttpStatusCode.OK) {
+            val weather = respuesta.body<WeatherResponse>()
+            return listOf(
+                Ciudad(
+                    name = weather.name,
+                    lat = weather.coord.lat,
+                    lon = weather.coord.lon,
+                    country = weather.sys.country
+                )
+            )
+        } else {
+            throw Exception("No se pudo obtener la ciudad por coordenadas")
         }
     }
 }

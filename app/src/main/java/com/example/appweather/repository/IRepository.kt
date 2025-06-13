@@ -8,4 +8,6 @@ interface IRepository {
     suspend fun buscarCiudad(ciudad: String): List<Ciudad>
     suspend fun traerClima(lat: Float, lon: Float) : Clima
     suspend fun traerPronostico(nombre: String) : List<ListForecast>
+    suspend fun buscarCiudadPorCoordenadas(lat: Double, lon: Double): List<Ciudad>
+
 }
