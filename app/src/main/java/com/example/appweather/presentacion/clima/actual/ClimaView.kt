@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -111,4 +112,91 @@ fun obtenerFondoPorId(id: Long): Int {
         in 801L..804L -> R.drawable.parcialnublado
         else -> R.drawable.main
     }
+}
+
+@Preview (showBackground = true)
+@Composable
+fun PreviewClimaCargando() {
+    ClimaView(
+        state = ClimaEstado.Cargando,
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewClimaVacio() {
+    ClimaView(
+        state = ClimaEstado.Vacio,
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewClimaError() {
+    ClimaView(
+        state = ClimaEstado.Error("No se pudo obtener el clima"),
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewClimaExitosoDespejado() {
+    ClimaView(
+        state = ClimaEstado.Exitoso(
+            ciudad = "Buenos Aires",
+            temperatura = 24.5,
+            descripcion = "Soleado",
+            st = 26.0,
+            climaId = 800L
+        ),
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewClimaExitosoParcialNublado() {
+    ClimaView(
+        state = ClimaEstado.Exitoso(
+            ciudad = "Buenos Aires",
+            temperatura = 24.5,
+            descripcion = "Parcialmente nublado",
+            st = 26.0,
+            climaId = 801L
+        ),
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewClimaExitosoNublado() {
+    ClimaView(
+        state = ClimaEstado.Exitoso(
+            ciudad = "Buenos Aires",
+            temperatura = 24.5,
+            descripcion = "Nublado",
+            st = 26.0,
+            climaId = 700L
+        ),
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewClimaExitosoLluvia() {
+    ClimaView(
+        state = ClimaEstado.Exitoso(
+            ciudad = "Buenos Aires",
+            temperatura = 24.5,
+            descripcion = "Lluvia",
+            st = 26.0,
+            climaId = 200L
+        ),
+        onAction = {}
+    )
 }

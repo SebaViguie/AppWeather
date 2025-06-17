@@ -38,6 +38,11 @@ android {
     buildFeatures {
         compose = true
     }
+    sourceSets {
+        getByName("main").java.srcDirs("src/main/java")
+        getByName("test").java.srcDirs("src/test/java")
+        getByName("androidTest").java.srcDirs("src/androidTest/java")
+    }
 }
 
 dependencies {
@@ -51,7 +56,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

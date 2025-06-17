@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.example.appweather.repository.models.Ciudad
 import com.example.appweather.R
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CiudadesView (
@@ -217,4 +218,45 @@ fun CiudadCard(
             }
         }
     }
+}
+@Preview(showBackground = true)
+@Composable
+fun PreviewCiudadesCargando() {
+    CiudadesView(
+        state = CiudadesEstado.Cargando,
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCiudadesError() {
+    CiudadesView(
+        state = CiudadesEstado.Error("Error al cargar ciudades"),
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCiudadesVacio() {
+    CiudadesView(
+        state = CiudadesEstado.Vacio,
+        onAction = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCiudadesResultado() {
+    val ciudadesFicticias = listOf(
+        Ciudad(name = "Buenos Aires", country = "AR", lat = (-34.6), lon = (-58.4)),
+        Ciudad(name = "Cordoba", country = "AR", lat = (-31.4), lon = (-64.2)),
+        Ciudad(name = "Mendoza", country = "AR", lat = (-32.9), lon = (-68.8))
+    )
+
+    CiudadesView(
+        state = CiudadesEstado.Resultado(ciudades = ciudadesFicticias),
+        onAction = {}
+    )
 }

@@ -7,14 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.appweather.repository.IRepository
-import com.example.appweather.router.Router
+import com.example.appweather.router.IRouter
 
 
 import kotlinx.coroutines.launch
 
 class PronosticoViewModel(
     val respositorio: IRepository,
-    val router: Router,
+    val router: IRouter,
     val nombre: String
 ) : ViewModel() {
 
@@ -45,7 +45,7 @@ class PronosticoViewModel(
 
 class PronosticoViewModelFactory(
     private val repositorio: IRepository,
-    private val router: Router,
+    private val router: IRouter,
     private val nombre: String,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")

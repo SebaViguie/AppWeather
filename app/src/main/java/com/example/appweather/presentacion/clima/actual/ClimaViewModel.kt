@@ -7,12 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.appweather.repository.IRepository
-import com.example.appweather.router.Router
+import com.example.appweather.router.IRouter
 import kotlinx.coroutines.launch
 
 class ClimaViewModel(
 val respositorio: IRepository,
-val router: Router,
+val router: IRouter,
 val lat : Float,
 val lon : Float,
 val nombre: String
@@ -49,7 +49,7 @@ val nombre: String
 
 class ClimaViewModelFactory(
     private val repositorio: IRepository,
-    private val router: Router,
+    private val router: IRouter,
     private val lat: Float,
     private val lon: Float,
     private val nombre: String,

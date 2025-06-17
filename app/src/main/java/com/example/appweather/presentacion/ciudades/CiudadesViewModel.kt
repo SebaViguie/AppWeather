@@ -9,13 +9,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.appweather.data.api.RetrofitInstance
 import com.example.appweather.repository.IRepository
 import com.example.appweather.repository.models.Ciudad
-import com.example.appweather.router.Router
+import com.example.appweather.router.IRouter
 import com.example.appweather.router.Ruta
 import kotlinx.coroutines.launch
 
 class CiudadesViewModel(
     val repositorio: IRepository,
-    val router: Router
+    val router: IRouter
 ) : ViewModel() {
 
     var uiState by mutableStateOf<CiudadesEstado>(CiudadesEstado.Vacio)
@@ -88,7 +88,7 @@ class CiudadesViewModel(
 
 class CiudadesViewModelFactory(
     private val repositorio: IRepository,
-    private val router: Router
+    private val router: IRouter
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
