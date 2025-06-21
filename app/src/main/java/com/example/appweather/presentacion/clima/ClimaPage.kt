@@ -42,7 +42,8 @@ fun ClimaPage(
             state = viewModel.uiState,
             onAction = { intencion ->
                 viewModel.ejecutar(intencion)
-            }
+            },
+            pronosticoState = pronosticoViewModel.uiState
         )
         PronosticoView(
             state = pronosticoViewModel.uiState,

@@ -26,12 +26,21 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.example.appweather.R
+import com.example.appweather.presentacion.clima.pronostico.PronosticoEstado
+import com.example.appweather.presentacion.clima.pronostico.PronosticoView
+import android.content.Intent
+import androidx.compose.material3.Button
+import androidx.compose.ui.platform.LocalContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ClimaView(
     modifier: Modifier = Modifier,
     state : ClimaEstado,
-    onAction: (ClimaIntencion)->Unit
+    onAction: (ClimaIntencion)->Unit,
+    pronosticoState: PronosticoEstado
 ) {
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         onAction(ClimaIntencion.actualizarClima)
@@ -73,6 +82,44 @@ fun ClimaView(
                 ClimaEstado.Cargando -> TextoCentrado(texto = "Nada que mostrar")
             }
             Spacer(modifier = Modifier.height(100.dp))
+            PronosticoView(
+                state = pronosticoState
+            ) { }
+
+            if (state is ClimaEstado.Exitoso) {
+                val context = LocalContext.current
+                Button(
+                    onClick = {
+                        val mensaje = buildString {
+                            append("Clima en ${state.ciudad}\n")
+                            append("Temperatura: ${state.temperatura}°\n")
+                            append("Descripción: ${state.descripcion}\n")
+                            append("Sensación térmica: ${state.st}°\n")
+
+                            if (pronosticoState is PronosticoEstado.Exitoso) {
+                                append("\nPronóstico próximas horas:\n")
+                                pronosticoState.climas.forEach {
+                                    val hora = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                        .format(Date(it.dt * 1000L))
+                                    append("$hora: ${it.main.temp}°\n")
+                                }
+                            }
+                        }
+
+                        val shareIntent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, mensaje)
+                            type = "text/plain"
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, "Compartir clima"))
+                    },
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text("Compartir")
+                }
+            }
         }
     }
 
@@ -119,7 +166,8 @@ fun obtenerFondoPorId(id: Long): Int {
 fun PreviewClimaCargando() {
     ClimaView(
         state = ClimaEstado.Cargando,
-        onAction = {}
+        onAction = {},
+        pronosticoState = PronosticoEstado.Cargando
     )
 }
 
@@ -128,7 +176,8 @@ fun PreviewClimaCargando() {
 fun PreviewClimaVacio() {
     ClimaView(
         state = ClimaEstado.Vacio,
-        onAction = {}
+        onAction = {},
+        pronosticoState = PronosticoEstado.Vacio
     )
 }
 
@@ -137,7 +186,8 @@ fun PreviewClimaVacio() {
 fun PreviewClimaError() {
     ClimaView(
         state = ClimaEstado.Error("No se pudo obtener el clima"),
-        onAction = {}
+        onAction = {},
+        pronosticoState = PronosticoEstado.Error("No se pudo obtener el pronóstico")
     )
 }
 
@@ -152,7 +202,8 @@ fun PreviewClimaExitosoDespejado() {
             st = 26.0,
             climaId = 800L
         ),
-        onAction = {}
+        onAction = {},
+        pronosticoState = PronosticoEstado.Exitoso(return)
     )
 }
 
@@ -167,7 +218,8 @@ fun PreviewClimaExitosoParcialNublado() {
             st = 26.0,
             climaId = 801L
         ),
-        onAction = {}
+        onAction = {},
+        pronosticoState = PronosticoEstado.Exitoso(return)
     )
 }
 
@@ -182,7 +234,8 @@ fun PreviewClimaExitosoNublado() {
             st = 26.0,
             climaId = 700L
         ),
-        onAction = {}
+        onAction = {},
+        pronosticoState = PronosticoEstado.Exitoso(return)
     )
 }
 
@@ -197,6 +250,7 @@ fun PreviewClimaExitosoLluvia() {
             st = 26.0,
             climaId = 200L
         ),
-        onAction = {}
+        onAction = {},
+        pronosticoState = PronosticoEstado.Exitoso(return)
     )
 }

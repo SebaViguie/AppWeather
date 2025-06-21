@@ -30,11 +30,8 @@ class PronosticoViewModel(
         uiState = PronosticoEstado.Cargando
         viewModelScope.launch {
             try{
-                val forecast = respositorio.traerPronostico(nombre).filter {
-                    //TODO agregar logica de filtrado
-                    true
-                }
-                uiState = PronosticoEstado.Exitoso(forecast)
+                val forecast = respositorio.traerPronostico(nombre)
+                uiState = PronosticoEstado.Exitoso(forecast.take(5))
             } catch (exception: Exception){
                 uiState = PronosticoEstado.Error(exception.localizedMessage ?: "error desconocido")
             }
