@@ -1,11 +1,13 @@
 package com.example.appweather.presentacion.ciudades
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.appweather.data.DataStoreManager
 import com.example.appweather.data.api.RetrofitInstance
 import com.example.appweather.repository.IRepository
 import com.example.appweather.repository.models.Ciudad
@@ -14,6 +16,7 @@ import com.example.appweather.router.Ruta
 import kotlinx.coroutines.launch
 
 class CiudadesViewModel(
+    private val context: Context,
     val repositorio: IRepository,
     val router: IRouter
 ) : ViewModel() {
@@ -77,23 +80,43 @@ class CiudadesViewModel(
     }
 
     private fun seleccionar(ciudad: Ciudad) {
-        val ruta = Ruta.Clima(
-            lat = ciudad.lat,
-            lon = ciudad.lon,
-            nombre = ciudad.name
-        )
-        router.navegar(ruta)
+        viewModelScope.launch {
+            DataStoreManager.saveCity(context, ciudad)
+
+            val ruta = Ruta.Clima(
+                lat = ciudad.lat,
+                lon = ciudad.lon,
+                nombre = ciudad.name
+            )
+            router.navegar(ruta)
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            DataStoreManager.selectedCityFlow(context).collect { ciudad ->
+                ciudad?.let {
+                    val ruta = Ruta.Clima(
+                        lat = it.lat,
+                        lon = it.lon,
+                        nombre = it.name
+                    )
+                    router.navegar(ruta)
+                }
+            }
+        }
     }
 }
 
 class CiudadesViewModelFactory(
+    private val context: Context,
     private val repositorio: IRepository,
     private val router: IRouter
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CiudadesViewModel::class.java)) {
-            return CiudadesViewModel(repositorio, router) as T
+            return CiudadesViewModel(context, repositorio, router) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
