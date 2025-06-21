@@ -14,6 +14,10 @@ import com.example.appweather.repository.models.Ciudad
 import com.example.appweather.router.IRouter
 import com.example.appweather.router.Ruta
 import kotlinx.coroutines.launch
+import com.example.appweather.BuildConfig // <-- ¡IMPORTANTE! Añade este import
+import retrofit2.HttpException // <-- Añade este import para manejar errores HTTP
+import java.io.IOException // <-- Añade este import para manejar errores de red
+
 
 class CiudadesViewModel(
     private val context: Context,
@@ -55,10 +59,17 @@ class CiudadesViewModel(
         uiState = CiudadesEstado.Cargando
         viewModelScope.launch {
             try {
+                val apiKey = BuildConfig.OPENWEATHER_API_KEY
+
+                if (apiKey.isNullOrEmpty() || apiKey == "null") {
+                    uiState = CiudadesEstado.Error("Error de configuración: API Key de OpenWeatherMap no encontrada.")
+                    return@launch
+                }
+
                 val respuesta = RetrofitInstance.api.getCurrentWeather(
                     lat = lat,
                     lon = lon,
-                    apiKey = "API_KEY",
+                    apiKey = apiKey,
                     units = "metric",
                     lang = "es"
                 )
@@ -73,8 +84,20 @@ class CiudadesViewModel(
                 ciudades = listOf(ciudad)
                 uiState = CiudadesEstado.Resultado(ciudades)
 
+            } catch (e: HttpException) {
+                val errorMessage = when (e.code()) {
+                    401 -> "Error 401: API Key inválida o no activada. Verifica tu clave en OpenWeatherMap."
+                    404 -> "Error 404: No se encontró información del clima para esas coordenadas."
+                    else -> "Error HTTP: ${e.code()} - ${e.message() ?: "error desconocido"}"
+                }
+                uiState = CiudadesEstado.Error(errorMessage)
+                e.printStackTrace()
+            } catch (e: IOException) {
+                uiState = CiudadesEstado.Error("Error de conexión a internet. Revisa tu conexión.")
+                e.printStackTrace()
             } catch (exception: Exception) {
-                uiState = CiudadesEstado.Error(exception.message ?: "error desconocido")
+                uiState = CiudadesEstado.Error(exception.message ?: "error desconocido al obtener el clima")
+                exception.printStackTrace()
             }
         }
     }

@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
-import com.example.appweather.util.obtenerUbicacion
+import com.example.appweather.util.obtenerUbicacionActual
 
 @Composable
 fun UbicacionButton(
@@ -40,7 +40,7 @@ fun UbicacionButton(
         onResult = { granted ->
             hasPermission = granted
             if (granted) {
-                obtenerUbicacion(context, onLocationObtained)
+                obtenerUbicacionActual(context, onLocationObtained)
             } else {
                 Toast.makeText(context, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
             }
@@ -50,7 +50,7 @@ fun UbicacionButton(
     IconButton(
         onClick = {
             if (hasPermission) {
-                obtenerUbicacion(context, onLocationObtained)
+                obtenerUbicacionActual(context, onLocationObtained)
             } else {
                 launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }

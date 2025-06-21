@@ -17,7 +17,7 @@ import com.example.appweather.data.model.WeatherResponse
 
 class RepositoryApi : IRepository {
 
-    private val apiKey = "0ee76513a41f5eaa1735576bc7900335"
+    private val apiKey = "00c596847d5fceaf5bd9f128f684807b"
 
     private val cliente = HttpClient(){
         install(ContentNegotiation){

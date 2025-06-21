@@ -17,6 +17,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "OPENWEATHER_API_KEY", "\"00c596847d5fceaf5bd9f128f684807b\"")
     }
 
     buildTypes {
@@ -37,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     sourceSets {
         getByName("main").java.srcDirs("src/main/java")
