@@ -30,4 +30,10 @@ object DataStoreManager {
                 }
             }
     }
+
+    suspend fun clearSavedCity(context: Context) {
+        context.dataStore.edit { preferences ->
+            preferences.remove(SELECTED_CITY)
+        }
+    }
 }

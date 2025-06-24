@@ -2,6 +2,7 @@ package com.example.appweather.presentacion.clima
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.appweather.presentacion.clima.actual.ClimaView
@@ -20,13 +21,16 @@ fun ClimaPage(
     lon : Float,
     nombre: String
 ){
+    val context = LocalContext.current.applicationContext
+
     val viewModel : ClimaViewModel = viewModel(
         factory = ClimaViewModelFactory(
             repositorio = RepositoryApi(),
             router = Router(navHostController),
             lat = lat,
             lon = lon,
-            nombre = nombre
+            nombre = nombre,
+            context = context
         )
     )
     val pronosticoViewModel : PronosticoViewModel = viewModel(

@@ -1,21 +1,25 @@
 package com.example.appweather.presentacion.clima.actual
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.appweather.data.DataStoreManager
 import com.example.appweather.repository.IRepository
 import com.example.appweather.router.IRouter
+import com.example.appweather.router.Ruta
 import kotlinx.coroutines.launch
 
 class ClimaViewModel(
-val respositorio: IRepository,
-val router: IRouter,
-val lat : Float,
-val lon : Float,
-val nombre: String
+    private val context: Context,
+    val respositorio: IRepository,
+    val router: IRouter,
+    val lat : Float,
+    val lon : Float,
+    val nombre: String
 ) : ViewModel() {
 
     var uiState by mutableStateOf<ClimaEstado>(ClimaEstado.Vacio)
@@ -23,6 +27,7 @@ val nombre: String
     fun ejecutar(intencion: ClimaIntencion){
         when(intencion){
             ClimaIntencion.actualizarClima -> traerClima()
+            is ClimaIntencion.CambiarCiudad -> cambiarCiudad()
         }
     }
 
@@ -45,9 +50,16 @@ val nombre: String
         }
     }
 
+    fun cambiarCiudad() {
+        viewModelScope.launch {
+            DataStoreManager.clearSavedCity(context)
+            router.navegar(Ruta.Ciudades)
+        }
+    }
 }
 
 class ClimaViewModelFactory(
+    private val context: Context,
     private val repositorio: IRepository,
     private val router: IRouter,
     private val lat: Float,
@@ -57,7 +69,7 @@ class ClimaViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ClimaViewModel::class.java)) {
-            return ClimaViewModel(repositorio,router,lat,lon,nombre) as T
+            return ClimaViewModel(context, repositorio,router,lat,lon,nombre) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
