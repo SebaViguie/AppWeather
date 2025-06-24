@@ -119,6 +119,15 @@ fun ClimaView(
                 ) {
                     Text("Compartir")
                 }
+
+                Button(
+                    onClick = {
+                        onAction(ClimaIntencion.CambiarCiudad)
+                    },
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    Text("Cambiar ciudad")
+                }
             }
         }
     }

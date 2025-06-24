@@ -12,12 +12,13 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
-import com.example.appweather.data.model.WeatherResponse
+import com.example.appweather.data.model.WeatherResponse // Este import es para el modelo de Retrofit, pero tu repo usa Ktor. Si este es el modelo que espera Ktor, está bien.
+import com.example.appweather.BuildConfig // <-- ¡Añade este import aquí!
 
 
 class RepositoryApi : IRepository {
 
-    private val apiKey = "00c596847d5fceaf5bd9f128f684807b"
+    private val apiKey = BuildConfig.OPENWEATHER_API_KEY
 
     private val cliente = HttpClient(){
         install(ContentNegotiation){
@@ -39,7 +40,7 @@ class RepositoryApi : IRepository {
             val ciudades = respuesta.body<List<Ciudad>>()
             return ciudades
         }else{
-            throw Exception()
+            throw Exception("Error al buscar ciudad por nombre: ${respuesta.status.value}")
         }
     }
 
@@ -55,7 +56,7 @@ class RepositoryApi : IRepository {
             val clima = respuesta.body<Clima>()
             return clima
         }else{
-            throw Exception()
+            throw Exception("Error al traer clima: ${respuesta.status.value}")
         }
     }
 
@@ -70,11 +71,14 @@ class RepositoryApi : IRepository {
             val forecast = respuesta.body<ForecastDTO>()
             return forecast.list
         }else{
-            throw Exception()
+            throw Exception("Error al traer pronóstico: ${respuesta.status.value}")
         }
     }
 
     override suspend fun buscarCiudadPorCoordenadas(lat: Double, lon: Double): List<Ciudad> {
+        if (apiKey.isNullOrEmpty() || apiKey == "null") {
+            throw IllegalStateException("API Key de OpenWeatherMap no configurada en BuildConfig para RepositoryApi.")
+        }
         val respuesta = cliente.get("https://api.openweathermap.org/data/2.5/weather") {
             parameter("lat", lat)
             parameter("lon", lon)
@@ -94,7 +98,7 @@ class RepositoryApi : IRepository {
                 )
             )
         } else {
-            throw Exception("No se pudo obtener la ciudad por coordenadas")
+            throw Exception("No se pudo obtener la ciudad por coordenadas (HTTP ${respuesta.status.value})")
         }
     }
 }
