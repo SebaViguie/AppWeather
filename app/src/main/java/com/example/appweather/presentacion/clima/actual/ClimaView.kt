@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,7 +87,7 @@ fun ClimaView(
                 ClimaEstado.Vacio -> TextoCentrado(texto = "Cargando...")
                 ClimaEstado.Cargando -> TextoCentrado(texto = "Nada que mostrar")
             }
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(32.dp))
             PronosticoView(
                 state = pronosticoState
             ) { }
@@ -154,11 +157,42 @@ fun TextoCentrado(texto: String) {
 
 @Composable
 fun ClimaContenido(ciudad: String, temperatura: Double, descripcion: String, st:Double, climaId:Long){
-    Column {
-        Text(text = ciudad, style = MaterialTheme.typography.titleMedium)
-        Text(text = "${temperatura}°", style = MaterialTheme.typography.titleLarge)
-        Text(text = descripcion, style = MaterialTheme.typography.bodyMedium)
-        Text(text = "Sensación Térmica: ${st}°", style = MaterialTheme.typography.bodyMedium)
+    Card(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFE5ECFF)
+        ),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = ciudad,
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "${temperatura}°",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = descripcion.replaceFirstChar { it.uppercase() },
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.DarkGray
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "Sensación térmica: ${st}°",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.DarkGray
+            )
+        }
     }
 }
 
