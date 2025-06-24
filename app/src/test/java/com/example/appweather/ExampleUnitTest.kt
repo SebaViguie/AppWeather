@@ -326,4 +326,22 @@ class ExampleUnitTest {
         }
     }
 
+    @Test
+    fun test_buscarPorCoordenadas_cargando() = runTest(timeout = 3.seconds) {
+        val factory = CiudadesViewModelFactory(context, repositorioDelay, router)
+        val viewModel = factory.create(CiudadesViewModel::class.java)
+
+        launch(Dispatchers.Main) {
+            val job = launch {
+                viewModel.ejecutar(CiudadesIntencion.BuscarPorCoordenadas(-31.4, -64.2))
+            }
+
+            delay(10) // todavía no termina el delay(100) del repositorio → debería estar en estado Cargando
+            assertEquals(CiudadesEstado.Cargando, viewModel.uiState)
+
+            job.join()
+        }
+    }
+
+
 }
