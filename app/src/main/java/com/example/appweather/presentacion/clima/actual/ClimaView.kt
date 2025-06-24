@@ -31,6 +31,9 @@ import com.example.appweather.presentacion.clima.pronostico.PronosticoView
 import android.content.Intent
 import androidx.compose.material3.Button
 import androidx.compose.ui.platform.LocalContext
+import com.example.appweather.repository.models.ListForecast
+import com.example.appweather.repository.models.MainForecast
+import com.example.appweather.repository.models.WeatherForecast
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -206,15 +209,42 @@ fun PreviewClimaExitosoDespejado() {
     ClimaView(
         state = ClimaEstado.Exitoso(
             ciudad = "Buenos Aires",
-            temperatura = 24.5,
+            temperatura = 28.0,
             descripcion = "Soleado",
-            st = 26.0,
+            st = 30.0,
+            icono = "01d",
             climaId = 800L
         ),
         onAction = {},
-        pronosticoState = PronosticoEstado.Exitoso(return)
+        pronosticoState = PronosticoEstado.Exitoso(
+            climas = listOf(
+                ListForecast(
+                    dt = 1719308400L,
+                    main = MainForecast(
+                        temp = 28.0,
+                        feels_like = 30.0,
+                        temp_min = 26.0,
+                        temp_max = 29.0,
+                        pressure = 1010,
+                        sea_level = 1010,
+                        grnd_level = 1004,
+                        humidity = 40,
+                        temp_kf = 0.0
+                    ),
+                    weather = listOf(
+                        WeatherForecast(
+                            id = 800,
+                            main = "Clear",
+                            description = "cielo claro",
+                            icon = "01d"
+                        )
+                    )
+                )
+            )
+        )
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -222,15 +252,42 @@ fun PreviewClimaExitosoParcialNublado() {
     ClimaView(
         state = ClimaEstado.Exitoso(
             ciudad = "Buenos Aires",
-            temperatura = 24.5,
+            temperatura = 22.0,
             descripcion = "Parcialmente nublado",
-            st = 26.0,
-            climaId = 801L
+            st = 23.5,
+            icono = "02d",
+            climaId = 802L
         ),
         onAction = {},
-        pronosticoState = PronosticoEstado.Exitoso(return)
+        pronosticoState = PronosticoEstado.Exitoso(
+            climas = listOf(
+                ListForecast(
+                    dt = 1719308400L,
+                    main = MainForecast(
+                        temp = 22.0,
+                        feels_like = 23.0,
+                        temp_min = 21.0,
+                        temp_max = 24.0,
+                        pressure = 1011,
+                        sea_level = 1011,
+                        grnd_level = 1005,
+                        humidity = 55,
+                        temp_kf = 0.0
+                    ),
+                    weather = listOf(
+                        WeatherForecast(
+                            id = 802,
+                            main = "Clouds",
+                            description = "algo nublado",
+                            icon = "02d"
+                        )
+                    )
+                )
+            )
+        )
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -238,15 +295,42 @@ fun PreviewClimaExitosoNublado() {
     ClimaView(
         state = ClimaEstado.Exitoso(
             ciudad = "Buenos Aires",
-            temperatura = 24.5,
+            temperatura = 20.0,
             descripcion = "Nublado",
-            st = 26.0,
+            st = 20.0,
+            icono = "03d",
             climaId = 700L
         ),
         onAction = {},
-        pronosticoState = PronosticoEstado.Exitoso(return)
+        pronosticoState = PronosticoEstado.Exitoso(
+            climas = listOf(
+                ListForecast(
+                    dt = 1719304800L, // 8:00 AM
+                    main = MainForecast(
+                        temp = 16.5,
+                        feels_like = 16.0,
+                        temp_min = 15.0,
+                        temp_max = 17.0,
+                        pressure = 1012,
+                        sea_level = 1012,
+                        grnd_level = 1006,
+                        humidity = 90,
+                        temp_kf = 0.0
+                    ),
+                    weather = listOf(
+                        WeatherForecast(
+                            id = 200,
+                            main = "Rain",
+                            description = "lluvia ligera",
+                            icon = "03d"
+                        )
+                    )
+                )
+            )
+        )
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -254,12 +338,38 @@ fun PreviewClimaExitosoLluvia() {
     ClimaView(
         state = ClimaEstado.Exitoso(
             ciudad = "Buenos Aires",
-            temperatura = 24.5,
+            temperatura = 17.0,
             descripcion = "Lluvia",
-            st = 26.0,
+            st = 16.0,
+            icono = "10d",
             climaId = 200L
         ),
         onAction = {},
-        pronosticoState = PronosticoEstado.Exitoso(return)
+        pronosticoState = PronosticoEstado.Exitoso(
+            climas = listOf(
+                ListForecast(
+                    dt = 1719304800L,
+                    main = MainForecast(
+                        temp = 16.5,
+                        feels_like = 16.0,
+                        temp_min = 15.0,
+                        temp_max = 17.0,
+                        pressure = 1012,
+                        sea_level = 1012,
+                        grnd_level = 1006,
+                        humidity = 90,
+                        temp_kf = 0.0
+                    ),
+                    weather = listOf(
+                        WeatherForecast(
+                            id = 200,
+                            main = "Rain",
+                            description = "lluvia ligera",
+                            icon = "10d"
+                        )
+                    )
+                )
+            )
+        )
     )
 }
