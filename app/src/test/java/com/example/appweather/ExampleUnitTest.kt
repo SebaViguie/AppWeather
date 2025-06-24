@@ -170,7 +170,7 @@ class ExampleUnitTest {
     @Test
     fun test_traerClima() = runTest(timeout = 3.seconds) {
         val cordoba = repositorio.cordoba
-        val factoryClima = ClimaViewModelFactory(repositorio,router,cordoba.lat.toFloat(),cordoba.lon.toFloat(),cordoba.name)
+        val factoryClima = ClimaViewModelFactory(context, repositorio,router,cordoba.lat.toFloat(),cordoba.lon.toFloat(),cordoba.name)
         val viewModelClima = factoryClima.create(ClimaViewModel::class.java)
 
         val climaEsperado = repositorio.traerClima(cordoba.lat.toFloat(), cordoba.lon.toFloat())
@@ -195,7 +195,7 @@ class ExampleUnitTest {
     fun test_traerClima_error() = runTest(timeout = 3.seconds) {
         val repositorioError = RepositorioMockError()
         val cordoba = repositorio.cordoba
-        val factory = ClimaViewModelFactory(repositorioError, router,cordoba.lat.toFloat(),cordoba.lon.toFloat(),cordoba.name)
+        val factory = ClimaViewModelFactory(context, repositorioError, router,cordoba.lat.toFloat(),cordoba.lon.toFloat(),cordoba.name)
         val viewModel = factory.create(ClimaViewModel::class.java)
 
         launch(Dispatchers.Main) {
@@ -212,7 +212,7 @@ class ExampleUnitTest {
     fun test_traerClima_cargando() = runTest(timeout = 3.seconds) {
         val repositorioDelay = RepositoryMockDelay()
         val cordoba = repositorioDelay.cordoba
-        val factory = ClimaViewModelFactory(repositorioDelay, router, cordoba.lat.toFloat(), cordoba.lon.toFloat(), cordoba.name)
+        val factory = ClimaViewModelFactory(context, repositorioDelay, router, cordoba.lat.toFloat(), cordoba.lon.toFloat(), cordoba.name)
         val viewModel = factory.create(ClimaViewModel::class.java)
 
         launch(Dispatchers.Main) {
@@ -228,7 +228,7 @@ class ExampleUnitTest {
     @Test
     fun test_traerClima_vacio() = runTest(timeout = 3.seconds) {
         val cordoba = repositorio.cordoba
-        val viewModel = ClimaViewModelFactory(repositorio, router, cordoba.lat.toFloat(), cordoba.lon.toFloat(), cordoba.name)
+        val viewModel = ClimaViewModelFactory(context, repositorio, router, cordoba.lat.toFloat(), cordoba.lon.toFloat(), cordoba.name)
             .create(ClimaViewModel::class.java)
 
         assertEquals(ClimaEstado.Vacio, viewModel.uiState)
@@ -310,21 +310,20 @@ class ExampleUnitTest {
         val lat = 0.0
         val lon = 0.0
 
-        val factoryError = CiudadesViewModelFactory(context = null, repositorio = RepositorioMockError(), router)
+        val factoryError = CiudadesViewModelFactory(context,repositorioError, router)
         val viewModelError = factoryError.create(CiudadesViewModel::class.java)
 
         launch(Dispatchers.Main) {
-            viewModelError.ejecutar(CiudadesIntencion.BuscarPorCoordenadas(lat, lon))
-
-            advanceUntilIdle()
-
+            val job = launch {
+                viewModelError.ejecutar(CiudadesIntencion.BuscarPorCoordenadas(lat, lon))
+            }
+            delay(100)
             assertEquals(
-                CiudadesEstado.Error("Error simulado en búsqueda por coordenadas"),
+                CiudadesEstado.Error("Error desconocido al obtener el clima"),
                 viewModelError.uiState
             )
+            job.join()
         }
     }
-
-
 
 }

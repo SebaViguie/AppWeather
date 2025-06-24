@@ -14,7 +14,7 @@ import com.example.appweather.router.Ruta
 import kotlinx.coroutines.launch
 
 class ClimaViewModel(
-    private val context: Context,
+    private val context: Context? = null,
     val respositorio: IRepository,
     val router: IRouter,
     val lat : Float,
@@ -52,14 +52,16 @@ class ClimaViewModel(
 
     fun cambiarCiudad() {
         viewModelScope.launch {
-            DataStoreManager.clearSavedCity(context)
+            context?.let {
+                DataStoreManager.clearSavedCity(it)
+            }
             router.navegar(Ruta.Ciudades)
         }
     }
 }
 
 class ClimaViewModelFactory(
-    private val context: Context,
+    private val context: Context? = null,
     private val repositorio: IRepository,
     private val router: IRouter,
     private val lat: Float,
