@@ -18,4 +18,8 @@ class RepositoryMockDelay : RepositorioMock(){
         delay(100)
         return super.traerPronostico(nombre)
     }
+    override suspend fun buscarCiudadPorCoordenadas(lat: Double, lon: Double): List<Ciudad> {
+        delay(100)
+        return super.buscarCiudadPorCoordenadas(lat, lon)
+    }
 }

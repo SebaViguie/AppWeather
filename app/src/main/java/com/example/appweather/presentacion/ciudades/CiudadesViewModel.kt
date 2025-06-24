@@ -20,7 +20,7 @@ import java.io.IOException // <-- Añade este import para manejar errores de red
 
 
 class CiudadesViewModel(
-    private val context: Context,
+    private val context: Context? = null,
     val repositorio: IRepository,
     val router: IRouter
 ) : ViewModel() {
@@ -62,7 +62,8 @@ class CiudadesViewModel(
                 val apiKey = BuildConfig.OPENWEATHER_API_KEY
 
                 if (apiKey.isNullOrEmpty() || apiKey == "null") {
-                    uiState = CiudadesEstado.Error("Error de configuración: API Key de OpenWeatherMap no encontrada.")
+                    uiState =
+                        CiudadesEstado.Error("Error de configuración: API Key de OpenWeatherMap no encontrada.")
                     return@launch
                 }
 
@@ -96,7 +97,9 @@ class CiudadesViewModel(
                 uiState = CiudadesEstado.Error("Error de conexión a internet. Revisa tu conexión.")
                 e.printStackTrace()
             } catch (exception: Exception) {
-                uiState = CiudadesEstado.Error(exception.message ?: "error desconocido al obtener el clima")
+                uiState = CiudadesEstado.Error(
+                    exception.message ?: "Error desconocido al obtener el clima"
+                )
                 exception.printStackTrace()
             }
         }
@@ -104,7 +107,9 @@ class CiudadesViewModel(
 
     private fun seleccionar(ciudad: Ciudad) {
         viewModelScope.launch {
-            DataStoreManager.saveCity(context, ciudad)
+            context?.let { ctx ->
+                DataStoreManager.saveCity(ctx, ciudad)
+            }
 
             val ruta = Ruta.Clima(
                 lat = ciudad.lat,
@@ -117,30 +122,32 @@ class CiudadesViewModel(
 
     init {
         viewModelScope.launch {
-            DataStoreManager.selectedCityFlow(context).collect { ciudad ->
-                ciudad?.let {
-                    val ruta = Ruta.Clima(
-                        lat = it.lat,
-                        lon = it.lon,
-                        nombre = it.name
-                    )
-                    router.navegar(ruta)
+            context?.let { ctx ->
+                DataStoreManager.selectedCityFlow(ctx).collect { ciudad ->
+                    ciudad?.let {
+                        val ruta = Ruta.Clima(
+                            lat = it.lat,
+                            lon = it.lon,
+                            nombre = it.name
+                        )
+                        router.navegar(ruta)
+                    }
                 }
             }
         }
     }
-}
 
-class CiudadesViewModelFactory(
-    private val context: Context,
-    private val repositorio: IRepository,
-    private val router: IRouter
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CiudadesViewModel::class.java)) {
-            return CiudadesViewModel(context, repositorio, router) as T
+    class CiudadesViewModelFactory(
+        private val context: Context? = null,
+        private val repositorio: IRepository,
+        private val router: IRouter
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(CiudadesViewModel::class.java)) {
+                return CiudadesViewModel(context, repositorio, router) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

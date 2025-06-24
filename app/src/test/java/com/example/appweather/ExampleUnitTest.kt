@@ -3,7 +3,7 @@ package com.example.appweather
 import com.example.appweather.presentacion.ciudades.CiudadesEstado
 import com.example.appweather.presentacion.ciudades.CiudadesIntencion
 import com.example.appweather.presentacion.ciudades.CiudadesViewModel
-import com.example.appweather.presentacion.ciudades.CiudadesViewModelFactory
+import com.example.appweather.presentacion.ciudades.CiudadesViewModel.CiudadesViewModelFactory
 import com.example.appweather.presentacion.clima.actual.ClimaEstado
 import com.example.appweather.presentacion.clima.actual.ClimaIntencion
 import com.example.appweather.presentacion.clima.actual.ClimaViewModel
@@ -23,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -42,7 +43,8 @@ class ExampleUnitTest {
     val repositorioError = RepositorioMockError()
     val repositorioDelay = RepositoryMockDelay()
     val router = RouterMock()
-    val factory = CiudadesViewModelFactory(repositorio,router)
+    val context = null
+    val factory = CiudadesViewModelFactory(context,repositorio,router)
     val viewModel = factory.create(CiudadesViewModel::class.java)
 
 
@@ -109,7 +111,8 @@ class ExampleUnitTest {
     @Test
     fun test_buscarCiudad_error() = runTest(timeout = 3.seconds) {
 
-        val factoryError = CiudadesViewModelFactory(repositorioError,router)
+        val context = null
+        val factoryError = CiudadesViewModelFactory(context,repositorioError,router)
         val viewModelError = factoryError.create(CiudadesViewModel::class.java)
 
         launch(Dispatchers.Main){
@@ -124,7 +127,8 @@ class ExampleUnitTest {
 
     @Test
     fun test_buscarCiudad_cargando() = runTest(timeout = 3.seconds) {
-        val factoryCargando = CiudadesViewModelFactory(repositorioDelay, router)
+        val context = null
+        val factoryCargando = CiudadesViewModelFactory(context,repositorioDelay, router)
         val viewModelCargando = factoryCargando.create(CiudadesViewModel::class.java)
 
         launch(Dispatchers.Main) {
@@ -141,7 +145,8 @@ class ExampleUnitTest {
 
     @Test
     fun test_seleccionarCiudad() = runTest(timeout = 3.seconds) {
-        val factorySeleccionar = CiudadesViewModelFactory(repositorio, router)
+        val context = null
+        val factorySeleccionar = CiudadesViewModelFactory(context,repositorio, router)
         val viewModelSeleccionar = factorySeleccionar.create(CiudadesViewModel::class.java)
         val ciudadSeleccionada = repositorio.cordoba
 
@@ -283,4 +288,43 @@ class ExampleUnitTest {
 
         assertEquals(PronosticoEstado.Vacio, viewModel.uiState)
     }
+
+    @Test
+    fun test_buscarPorCoordenadas_exitoso() = runTest(timeout = 3.seconds) {
+        val lat = repositorio.cordoba.lat
+        val lon = repositorio.cordoba.lon
+        val factory = CiudadesViewModelFactory(context,repositorio, router)
+        val viewModel = factory.create(CiudadesViewModel::class.java)
+
+
+            viewModel.ejecutar(CiudadesIntencion.BuscarPorCoordenadas(lat, lon))
+            advanceUntilIdle()
+
+            val ciudadEsperada = listOf(repositorio.cordoba)
+            assertEquals(CiudadesEstado.Resultado(ciudadEsperada), viewModel.uiState)
+
+    }
+
+    @Test
+    fun test_buscarPorCoordenadas_error() = runTest(timeout = 3.seconds) {
+        val lat = 0.0
+        val lon = 0.0
+
+        val factoryError = CiudadesViewModelFactory(context = null, repositorio = RepositorioMockError(), router)
+        val viewModelError = factoryError.create(CiudadesViewModel::class.java)
+
+        launch(Dispatchers.Main) {
+            viewModelError.ejecutar(CiudadesIntencion.BuscarPorCoordenadas(lat, lon))
+
+            advanceUntilIdle()
+
+            assertEquals(
+                CiudadesEstado.Error("Error simulado en búsqueda por coordenadas"),
+                viewModelError.uiState
+            )
+        }
+    }
+
+
+
 }

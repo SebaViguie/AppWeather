@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import com.example.appweather.router.Router
 import com.example.appweather.repository.RepositoryApi
 import androidx.compose.ui.platform.LocalContext
+import com.example.appweather.presentacion.ciudades.CiudadesViewModel.CiudadesViewModelFactory
 
 
 @Composable

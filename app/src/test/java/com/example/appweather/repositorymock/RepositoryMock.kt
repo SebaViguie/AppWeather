@@ -70,8 +70,12 @@ open class RepositorioMock : IRepository {
     }
 
     override suspend fun buscarCiudadPorCoordenadas(lat: Double, lon: Double): List<Ciudad> {
-        TODO("Not yet implemented")
+        val margen = 0.3  // Permite una diferencia de 0.3 en coordenadas
+        return ciudades.filter {
+            kotlin.math.abs(it.lat - lat) <= margen && kotlin.math.abs(it.lon - lon) <= margen
+        }
     }
+
 }
 
 class RepositorioMockError : IRepository {
@@ -89,6 +93,6 @@ class RepositorioMockError : IRepository {
     }
 
     override suspend fun buscarCiudadPorCoordenadas(lat: Double, lon: Double): List<Ciudad> {
-        TODO("Not yet implemented")
+        throw Exception("Error desconocido al obtener el clima")
     }
 }
