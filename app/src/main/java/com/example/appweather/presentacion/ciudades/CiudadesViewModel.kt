@@ -8,15 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.appweather.data.DataStoreManager
-import com.example.appweather.data.api.RetrofitInstance
+// import com.example.appweather.data.api.RetrofitInstance // <-- Puedes quitar este import si ya no lo usas aquí
 import com.example.appweather.repository.IRepository
 import com.example.appweather.repository.models.Ciudad
 import com.example.appweather.router.IRouter
 import com.example.appweather.router.Ruta
 import kotlinx.coroutines.launch
-import com.example.appweather.BuildConfig // <-- ¡IMPORTANTE! Añade este import
-import retrofit2.HttpException // <-- Añade este import para manejar errores HTTP
-import java.io.IOException // <-- Añade este import para manejar errores de red
+// import com.example.appweather.BuildConfig // <-- Puedes quitar este import si ya no usas la API Key directamente aquí
+import retrofit2.HttpException // <-- Mantén este si el Repositorio aún puede lanzar HttpExceptions
+import java.io.IOException // <-- Mantén este si el Repositorio aún puede lanzar IOExceptions
 
 
 class CiudadesViewModel(
@@ -59,30 +59,14 @@ class CiudadesViewModel(
         uiState = CiudadesEstado.Cargando
         viewModelScope.launch {
             try {
-                val apiKey = BuildConfig.OPENWEATHER_API_KEY
+                val ciudadesEncontradas = repositorio.buscarCiudadPorCoordenadas(lat, lon)
 
-                if (apiKey.isNullOrEmpty() || apiKey == "null") {
-                    uiState = CiudadesEstado.Error("Error de configuración: API Key de OpenWeatherMap no encontrada.")
-                    return@launch
+                if (ciudadesEncontradas.isEmpty()) {
+                    uiState = CiudadesEstado.Vacio
+                } else {
+                    ciudades = ciudadesEncontradas
+                    uiState = CiudadesEstado.Resultado(ciudadesEncontradas)
                 }
-
-                val respuesta = RetrofitInstance.api.getCurrentWeather(
-                    lat = lat,
-                    lon = lon,
-                    apiKey = apiKey,
-                    units = "metric",
-                    lang = "es"
-                )
-
-                val ciudad = Ciudad(
-                    name = respuesta.name,
-                    lat = respuesta.coord.lat,
-                    lon = respuesta.coord.lon,
-                    country = respuesta.sys.country
-                )
-
-                ciudades = listOf(ciudad)
-                uiState = CiudadesEstado.Resultado(ciudades)
 
             } catch (e: HttpException) {
                 val errorMessage = when (e.code()) {

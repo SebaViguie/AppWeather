@@ -1,5 +1,8 @@
 package com.example.appweather.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class WeatherResponse(
     val coord: Coord,
     val weather: List<Weather>,
@@ -8,11 +11,13 @@ data class WeatherResponse(
     val sys: Sys
 )
 
+@Serializable
 data class Coord(
     val lon: Double,
     val lat: Double
 )
 
+@Serializable
 data class Weather(
     val id: Int,
     val main: String,
@@ -20,6 +25,7 @@ data class Weather(
     val icon: String
 )
 
+@Serializable
 data class Main(
     val temp: Double,
     val feels_like: Double,
@@ -29,6 +35,7 @@ data class Main(
     val humidity: Int
 )
 
+@Serializable
 data class Sys(
     val country: String
 )
