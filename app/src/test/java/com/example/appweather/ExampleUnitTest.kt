@@ -88,7 +88,7 @@ class ExampleUnitTest {
         launch(Dispatchers.Main){
             viewModel.ejecutar(
                 intencion = CiudadesIntencion.Buscar("plat"))
-            delay(1.milliseconds)
+            delay(100)
             assertEquals(
                 CiudadesEstado.Resultado(listOf(repositorio.laPlata)),
                 viewModel.uiState)
